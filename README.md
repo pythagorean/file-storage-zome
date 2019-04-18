@@ -48,12 +48,19 @@ hc run --package
 ```
 
 To run the frontend
-Open a new terminal
-Install the http-server utility (npm install -g http-server)
+
+Open a new separate terminal (So the backend stays running in the other one)
+
+Install the http-server utility `npm install -g http-server` (or use another lightweight http-server)
+
+Then
+
 ```
 cd ui
 http-server
 ```
+
+Open your web browser and upload and download some files
 
 ## Current Status
 File storage zome - There is currently scaffolding. It needs coding, validation and testing
