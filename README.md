@@ -36,6 +36,30 @@ The javascript interface should expose higher level functions to the end user su
 - `storeFile(bytes: UInt8Array): string | Error` - returns the address of the manifest as a string
 - `getFile(address: string): UInt8Array | Error` - given the manifest address returns the restructured chunks
 
+
+## Getting Started
+
+Fork the repo
+
+To run the holochain portion
+```
+cd dna-src
+hc run --package
+```
+
+To run the frontend
+Open a new terminal
+Install the http-server utility (npm install -g http-server)
+``
+cd ui
+http-server
+``
+
+## Current Status
+File storage zome - There is currently scaffolding. It needs coding, validation and testing
+Client library - There is a es6 module that returns mocked data.
+Sample UI - This is running and using the lib. Application holochain data (where the list of files is storage) is currently mocked in the frontend.
+
 ## Contributing
 
 We follow the "fork-and-pull" Git workflow.

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>File storage zome sample application</title>
+  <script type="module" src="js-lib/file-storage-zome-client.js"></script>
+  <script src="lib/hc-web-client-0.4.0.browser.min.js"></script>
+  <script type="module" src="app.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body class="p-3">
+  <form id="add_file_form">
+    <div class="form-group">
+      <label>
+        Name
+        <input class="form-control" id="add_file_field_name" type="text">
+      </label>
+    </div>
+    <div class="form-group">
+      <label>
+        Select File
+        <input class="form-control" id="add_file_field_file" type="file">
+      </label>
+    </div>
+    <div class="form-group">
+      <input class="btn btn-primary" id="add_file_field_submit" type="button" value="Add File"
+        onclick="app.addFile({name: document.getElementById('add_file_field_name').value, file: document.getElementById('add_file_field_file').files[0]}); document.getElementById('add_file_form').reset()">
+    </div>
+  </form>
+  <div class="mt-5">
+    <h3>Download files</h3>
+    <table>
+      <th>Filename</th><th>Address</th><th>Download</th>
+      <tbody id="file_list_table_body"></tbody>
+    </table>
+  </div>
+</body>
+
+</html>
