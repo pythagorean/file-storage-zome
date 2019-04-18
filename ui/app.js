@@ -17,6 +17,16 @@ class App {
 
     addFile(fileInfo) {
         console.log("Add file name: " + fileInfo.name + " file: " + fileInfo.file);
+
+        if (fileInfo.file == null) {
+            alert("Select a file");
+            return;
+        }
+
+        if (fileInfo.name == null || fileInfo.name.trim().length === 0) {
+            fileInfo.name = fileInfo.file.name;
+        }
+
         let address = this.fileClient.storeFile(fileInfo.file);
         
         // TODO: Call our app zome function and save the address + filename
@@ -52,7 +62,7 @@ class App {
         let fileListTableBodyEle = document.getElementById('file_list_table_body');
         var rows = [];
         this.getFiles().forEach(file => {
-            rows.push('<tr><td>' + file.fileName + '</td><td>' + file.manifestAddress + '</td><td><button onclick="app.downloadFile(\'' + file.manifestAddress + '\',\'' + file.fileName + '\')">Download</button></td></tr>')
+            rows.push('<tr><td>' + file.fileName + '</td><td>' + file.manifestAddress + '</td><td><button class="btn btn-primary" onclick="app.downloadFile(\'' + file.manifestAddress + '\',\'' + file.fileName + '\')">Download</button></td></tr>')
         });
 
         fileListTableBodyEle.innerHTML = rows.join('\n');
