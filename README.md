@@ -39,7 +39,7 @@ The javascript interface should expose higher level functions to the end user su
 
 ## Getting Started
 
-Fork the repo
+Clone the repo (Or better still, fork then clone, so you can work on it too)
 
 To run the holochain portion
 ```
@@ -50,10 +50,10 @@ hc run --package
 To run the frontend
 Open a new terminal
 Install the http-server utility (npm install -g http-server)
-``
+```
 cd ui
 http-server
-``
+```
 
 ## Current Status
 File storage zome - There is currently scaffolding. It needs coding, validation and testing
