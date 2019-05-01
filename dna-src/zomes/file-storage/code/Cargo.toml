@@ -1,16 +1,21 @@
 [package]
 name = "file_storage"
 version = "0.1.0"
-authors = ["willem <willemolding@gmail.com>"]
+authors = ["willem <willemolding@gmail.com>", "Michael Goldman <mike.goldman@allstreets.org>"]
 edition = "2018"
 
 [dependencies]
 serde = "1.0"
 serde_json = "1.0"
 serde_derive = "1.0"
-hdk = { git = "https://github.com/holochain/holochain-rust", tag = "v0.0.7-alpha" }
-holochain_wasm_utils = { git = "https://github.com/holochain/holochain-rust", tag = "v0.0.7-alpha" }
-holochain_core_types_derive = { git = "https://github.com/holochain/holochain-rust", tag = "v0.0.7-alpha" }
+hdk = "0.0.13-alpha1"
+holochain_wasm_utils = "0.0.13-alpha1"
+holochain_core_types_derive = "0.0.13-alpha1"
+
+[patch.crates-io]
+hdk = {git = "https://github.com/holochain/holochain-rust", tag = "v0.0.13-alpha1"}
+holochain_wasm_utils = {git = "https://github.com/holochain/holochain-rust", tag = "v0.0.13-alpha1"}
+holochain_core_types_derive = {git = "https://github.com/holochain/holochain-rust", tag = "v0.0.13-alpha1"}
 
 [lib]
 path = "src/lib.rs"
