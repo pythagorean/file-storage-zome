@@ -1,7 +1,7 @@
 # file-storage-zome
-A zome that can be mixed in to any DNA to provide basic file storage capabilities. 
+A zome that can be mixed in to any DNA to provide basic file storage capabilities.
 
-This aims to be a community maintained project and will receive support but minimal contributions from the dev team 
+This aims to be a community maintained project and will receive support but minimal contributions from the dev team
 
 ## Requirements
 
@@ -43,8 +43,7 @@ Clone the repo (Or better still, fork then clone, so you can work on it too)
 
 To run the holochain portion
 ```
-cd dna-src
-hc run --package
+make dna-start
 ```
 
 To run the frontend
@@ -56,8 +55,7 @@ Install the http-server utility `npm install -g http-server` (or use another lig
 Then
 
 ```
-cd ui
-http-server
+make ui-start
 ```
 
 Open your web browser and upload and download some files
