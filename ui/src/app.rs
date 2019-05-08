@@ -1,124 +1,106 @@
-import {
-    add,
-    default as init
-} from './pkg/file_storage_zome_client.js';
+use js_sys::Function;
+use serde::Serialize;
+use wasm_bindgen::prelude::*;
+use web_sys::*;
 
-async function compilePkg() {
-    const url = await fetch('./pkg/file_storage_zome_client_bg.wasm');
-    const body = await url.arrayBuffer();
-    const module = await WebAssembly.compile(body);
-    await init(module);
+use crate::file_storage_zome_client::FileStorageZomeClient;
 
-    const result = add(1, 2);
-    if (result == 3) {
-        return "pkg compiled";
-    } else {
-        throw new Error("wasm addition doesn't work!");
-    }
+#[derive(Serialize)]
+struct MockFile {
+    manifest_address: String,
+    file_name: String,
 }
 
-async function ensureResolved(prop) {
-    const value = await prop;
-    if (value instanceof Error) {
-        throw value;
-    } else {
-        return value;
-    }
+#[wasm_bindgen]
+#[allow(dead_code)]
+pub struct App {
+    call_zome: Function,
+    file_client: FileStorageZomeClient,
+    mock_file_list: Vec<MockFile>,
 }
 
-import {
-    FileStorageZomeClient
-} from './js-lib/file-storage-zome-client.js';
-
-class App {
-    pkg;
-    callZome;
-    fileClient;
-    mockFileList = [{
-        manifestAddress: "abcd776afbcbcffa73231",
-        fileName: "reddot.png"
-    }];
-
-    constructor() {
-        this.pkg = compilePkg().catch(err => Promise.resolve(err));
-
-        holochainclient.connect("ws://localhost:8888").then(({
-            callZome,
-            close
-        }) => {
-            this.callZome = callZome;
-            this.fileClient = new FileStorageZomeClient(this.callZome);
-        });
-
-        setInterval(() => this.generateFileListTableBody(), 1000);
+#[wasm_bindgen]
+#[allow(non_snake_case)]
+impl App {
+    pub fn new(call_zome: Function) -> Self {
+        Self {
+            call_zome: call_zome.clone(),
+            file_client: FileStorageZomeClient::new(call_zome),
+            mock_file_list: vec![MockFile {
+                manifest_address: "abcd776afbcbcffa73231".into(),
+                file_name: "reddot.png".into(),
+            }],
+        }
     }
 
-    async getPkg() {
-        return ensureResolved(this.pkg);
-    }
+    #[allow(clippy::bool_comparison)]
+    pub fn addFile(&mut self) {
+        let mut name = js! { return document.getElementById("add_file_field_name").value };
+        let file = js! { return document.getElementById("add_file_field_file").files[0] };
 
-    addFile(fileInfo) {
-        console.log("Add file name: " + fileInfo.name + " file: " + fileInfo.file);
-
-        if (fileInfo.file == null) {
-            alert("Select a file");
+        js! { console.log("Add file name: " + @{name.clone()} + " file: " + @{file.clone()}); };
+        if js! { return @{file.clone()} == null } == true {
+            js! { alert("Select a file") };
             return;
         }
 
-        if (fileInfo.name == null || fileInfo.name.trim().length === 0) {
-            fileInfo.name = fileInfo.file.name;
+        if js! { return @{name.clone()} == null || @{name.clone()}.trim().length === 0 } == true {
+            name = js! { return @{file.clone()}.name };
         }
 
-        let address = this.fileClient.storeFile(fileInfo.file);
+        let manifest_address = self.file_client.store_file(file);
+        let file_name = name.into_string().unwrap();
 
         // TODO: Call our app zome function and save the address + filename
-        // this.callZome()
+        // self.call_zome()
 
-        this.mockFileList.push({
-            manifestAddress: address,
-            fileName: fileInfo.name
+        self.mock_file_list.push(MockFile {
+            manifest_address,
+            file_name,
         });
+
+        js! { document.getElementById("add_file_form").reset() };
+        js! { document.getElementById("add_file_field_file_label").innerText = "Select File" };
     }
 
-    getFiles() {
+    pub fn getFiles(&mut self) -> JsValue {
         // TODO: Call our app zome function and get the files
-        // this.callZome()
+        // self.call_zome()
 
         // Return mock data
-        return this.mockFileList;
+        JsValue::from_serde(&self.mock_file_list).unwrap()
     }
 
-    downloadFile(manifestAddress, fileName) {
-        let data = this.fileClient.getFile(manifestAddress);
+    pub fn downloadFile(&mut self, manifest_address: String, file_name: String) {
+        let data = self.file_client.get_file(&manifest_address);
 
-        let a = document.createElement("a");
-        document.body.appendChild(a);
-        a.style = "display: none";
+        let a = js! { return document.createElement("a") };
+        js! { document.body.appendChild(@{a.clone()}) };
+        js! { @{a.clone()}.style = "display: none" };
 
-        let blob = new Blob([data], {
-            type: "octet/stream"
-        });
-        let url = window.URL.createObjectURL(blob);
-        a.href = url;
-        a.download = fileName;
-        a.click();
-        window.URL.revokeObjectURL(url);
+        let blob = Blob::new_with_u8_array_sequence_and_options(
+            &data,
+            BlobPropertyBag::new().type_("octet/stream"),
+        )
+        .unwrap();
+        let url = Url::create_object_url_with_blob(&blob).unwrap();
+        js! { @{a.clone()}.href = @{url.clone()} };
+        js! { @{a.clone()}.download = @{file_name} };
+        js! { @{a}.click() };
+        Url::revoke_object_url(&url).unwrap();
     }
 
-    generateFileListTableBody() {
-        let fileListTableBodyEle = document.getElementById('file_list_table_body');
-        var rows = [];
-        this.getFiles().forEach(file => {
-            rows.push('<tr><td>' + file.fileName + '</td><td>' + file.manifestAddress + '</td><td><button class="btn btn-primary" onclick="app.downloadFile(\'' + file.manifestAddress + '\',\'' + file.fileName + '\')">Download</button></td></tr>')
+    pub fn generateFileListTableBody(&mut self) {
+        let file_list_table_body_ele =
+            js! { return document.getElementById("file_list_table_body") };
+        let mut rows: Vec<String> = Vec::new();
+        self.mock_file_list.iter().for_each(|file| {
+            rows.push(format!(
+                r#"<tr><td>{}</td><td>{}</td><td><button class="btn btn-primary" onclick="app.downloadFile('{}', '{}')">Download</button></td></tr>"#,
+                &file.file_name, &file.manifest_address, &file.manifest_address, &file.file_name
+            ))
         });
 
-        fileListTableBodyEle.innerHTML = rows.join('\n');
+        js! { @{file_list_table_body_ele}.innerHTML = @{rows.join("\n")} };
     }
 }
-
-const app = new App();
-app.getPkg()
-    .then(pkg => console.log("succeeded", pkg))
-    .catch(err => console.error("failed", err));
-
-window.app = app;

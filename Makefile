@@ -14,7 +14,7 @@ update: dna-update ui-update
 
 dna: dna-build
 
-dna-build: dna
+dna-build:
 	(cd dna-src; hc package)
 
 dna-fmt:
@@ -31,6 +31,7 @@ dna-update:
 
 dna-clean:
 	(cd dna-src/zomes/*/code; cargo +$(NIGHTLY) clean && rm -f Cargo.lock)
+	(cd dna-src; rm -rf dist)
 
 ui: ui-build
 
