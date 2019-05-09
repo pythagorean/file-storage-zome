@@ -36,7 +36,7 @@ dna-clean:
 ui: ui-build
 
 ui-build:
-	(cd ui; wasm-pack build --target web)
+	(cd ui; rustup run stable wasm-pack build --target web)
 
 ui-fmt:
 	(cd ui; cargo fmt)
