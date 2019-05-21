@@ -2,7 +2,6 @@
 extern crate stdweb;
 extern crate base64;
 extern crate js_sys;
-extern crate web_sys;
 
 mod app;
 mod file_storage_zome_client;

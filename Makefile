@@ -18,7 +18,7 @@ dna-build:
 	(cd dna-src; hc package)
 
 dna-fmt:
-	(cd dna-src/zomes/*/code; cargo +$(NIGHTLY) fmt)
+	(cd dna-src/zomes/*/code; cargo +$(NIGHTLY) do fmt, tomlfmt)
 
 dna-lint:
 	(cd dna-src/zomes/*/code; cargo +$(NIGHTLY) clippy)
@@ -37,15 +37,20 @@ ui: ui-build
 
 ui-build:
 	(cd ui; rustup run stable wasm-pack build --target web)
+	(cd ui/pkg; \
+		tar cf snippets.tar `grep "^import" file_storage_zome_client.js | cut -d \' -f2`; \
+		rm -rf snippets; \
+		tar xf snippets.tar; \
+		rm snippets.tar)
 
 ui-fmt:
-	(cd ui; cargo fmt)
+	(cd ui; cargo +stable do fmt, tomlfmt)
 
 ui-lint:
-	(cd ui; cargo clippy)
+	(cd ui; cargo +stable clippy)
 
 ui-update:
-	(cd ui; cargo update)
+	(cd ui; cargo +stable update)
 
 ui-clean:
 	(cd ui; rm -rf pkg target Cargo.lock)

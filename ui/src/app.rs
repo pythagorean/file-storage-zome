@@ -1,7 +1,7 @@
 use js_sys::Function;
 use serde::Serialize;
+use stdweb::{unstable::TryInto, web::Blob};
 use wasm_bindgen::prelude::*;
-use web_sys::*;
 
 use crate::file_storage_zome_client::FileStorageZomeClient;
 
@@ -78,16 +78,14 @@ impl App {
         js! { document.body.appendChild(@{a.clone()}) };
         js! { @{a.clone()}.style = "display: none" };
 
-        let blob = Blob::new_with_u8_array_sequence_and_options(
-            &data,
-            BlobPropertyBag::new().type_("octet/stream"),
-        )
-        .unwrap();
-        let url = Url::create_object_url_with_blob(&blob).unwrap();
+        let blob: Blob = js! { return new Blob(@{data}, {type: "octet/stream"}) }
+            .try_into()
+            .unwrap();
+        let url = js! { return window.URL.createObjectURL(@{blob}) };
         js! { @{a.clone()}.href = @{url.clone()} };
         js! { @{a.clone()}.download = @{file_name} };
         js! { @{a}.click() };
-        Url::revoke_object_url(&url).unwrap();
+        js! { window.URL.revokeObjectURL(@{url}) };
     }
 
     pub fn generateFileListTableBody(&mut self) {
