@@ -78,7 +78,7 @@ impl App {
         js! { document.body.appendChild(@{a.clone()}) };
         js! { @{a.clone()}.style = "display: none" };
 
-        let blob: Blob = js! { return new Blob(@{data}, {type: "octet/stream"}) }
+        let blob: Blob = js! { return new Blob([@{data}], {type: "octet/stream"}) }
             .try_into()
             .unwrap();
         let url = js! { return window.URL.createObjectURL(@{blob}) };

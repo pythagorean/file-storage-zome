@@ -1,5 +1,6 @@
 use js_sys::Function;
 use stdweb::web::TypedArray;
+use stdweb::unstable::TryInto;
 
 #[allow(dead_code)]
 pub struct FileStorageZomeClient {
