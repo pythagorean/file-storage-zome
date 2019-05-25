@@ -37,10 +37,10 @@ impl App {
     }
 
     #[allow(clippy::bool_comparison)]
-    pub fn addFile(&mut self) {
-        let name = document().get_element_by_id("add_file_field_name").unwrap();
+    pub fn addFile(&mut self, add_file_field_name: String, add_file_field_file: String) {
+        let name = document().get_element_by_id(&add_file_field_name).unwrap();
         let mut name = js!(return @{name}.value);
-        let file = document().get_element_by_id("add_file_field_file").unwrap();
+        let file = document().get_element_by_id(&add_file_field_file).unwrap();
         let file = js!(return @{file}.files[0]);
 
         console!(log, "Add file name: ", name.clone(), " file: ", file.clone());
@@ -63,13 +63,6 @@ impl App {
             manifest_address,
             file_name,
         });
-
-        if let Some(form) = document().get_element_by_id("add_file_form") {
-            js!(@{form}.reset());
-        }
-        if let Some(label) = document().get_element_by_id("add_file_field_label") {
-            js!(@{label}.innerText = "Select File");
-        }
     }
 
     pub fn getFiles(&mut self) -> JsValue {

@@ -28,7 +28,7 @@
     </div>
     <div class="form-group">
       <input class="btn btn-primary mt-3" id="add_file_field_submit" type="button" value="Add File"
-        onclick="app.addFile();"
+        onclick="app.addFile('add_file_field_name', 'add_file_field_file'); document.getElementById('add_file_form').reset(); document.getElementById('add_file_field_file_label').innerText='Select File';"
     </div>
   </form>
   <div class="mt-5">
