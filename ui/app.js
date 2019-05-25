@@ -10,36 +10,13 @@ async function compilePkg() {
     await init(module);
 }
 
-class MyApp {
-    app;
-    constructor() {
-        compilePkg().catch(err => Promise.resolve(err)).then(() => {
-            holochainclient.connect("ws://localhost:8888").then(({
-                callZome,
-                close
-            }) => {
-                this.app = App.new(callZome);
-            })
-        });
+compilePkg().catch(err => Promise.resolve(err)).then(() => {
+    holochainclient.connect("ws://localhost:8888").then(({
+        callZome,
+        close
+    }) => {
+        window.app = App.new(callZome);
+    })
+});
 
-        setInterval(() => this.generateFileListTableBody(), 1000);
-    }
-
-    addFile() {
-        this.app.addFile();
-    }
-
-    getFiles() {
-        return this.app.getFiles();
-    }
-
-    downloadFile(manifestAddress, fileName) {
-        return this.app.downloadFile(manifestAddress, fileName);
-    }
-
-    generateFileListTableBody() {
-        this.app.generateFileListTableBody();
-    }
-}
-
-window.app = new MyApp();
+setInterval(() => window.app.generateFileListTableBody(), 1000);
