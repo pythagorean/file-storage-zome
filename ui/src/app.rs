@@ -37,9 +37,7 @@ impl App {
     }
 
     #[allow(clippy::bool_comparison)]
-    pub fn addFile(&mut self, add_file_field_name: String, add_file_field_file: String) {
-        let name = document().get_element_by_id(&add_file_field_name).unwrap();
-        let mut name = js!(return @{name}.value);
+    pub fn addFile(&mut self, name: String, add_file_field_file: String) {
         let file = document().get_element_by_id(&add_file_field_file).unwrap();
         let file = js!(return @{file}.files[0]);
 
@@ -49,12 +47,12 @@ impl App {
             return;
         }
 
-        if js!(return @{name.clone()} == null || @{name.clone()}.trim().length === 0) == true {
-            name = js!(return @{file.clone()}.name);
-        }
-
-        let manifest_address = self.file_client.store_file(file);
-        let file_name = name.into_string().unwrap();
+        let manifest_address = self.file_client.store_file(file.clone());
+        let file_name = if name.is_empty() {
+            js!(return @{file.clone()}.name).into_string().unwrap()
+        } else {
+            name
+        };
 
         // TODO: Call our app zome function and save the address + filename
         // self.call_zome()
